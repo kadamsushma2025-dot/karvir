@@ -11,55 +11,177 @@
         <link href="resources/photon-geocoder-autocomplete.min.css" rel="stylesheet">
         <link rel="stylesheet" href="./resources/ol-layerswitcher.css">
         <link rel="stylesheet" href="./resources/qgis2web.css">
+        
         <style>
-        html, body {
-            background-color: #ffffff;
-        }
-        .ol-control > * {
-            background-color: #f8f8f8!important;
-            color: #444444!important;
-            border-radius: 0px;
-        }
-        .ol-attribution a, .gcd-gl-input::placeholder, .search-layer-input-search::placeholder {
-            color: #444444!important;
-        }
-        .search-layer-input-search {
-            background-color: #f8f8f8!important;
-        }
-        .ol-control > *:focus, .ol-control >*:hover {
-            background-color: rgba(248, 248, 248, 0.7)!important;
-        } 
-        .ol-control {
-            background-color: rgba(255,255,255,.4) !important;
-            padding: 2px !important;
-        } 
-        </style>
+            html, body {
+                background-color: #f4f6f9;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
 
-        <style>
-        #map {
-            width: 932px;
-            height: 665px;
-        }
+            /* Container styling */
+            .map-container {
+                position: relative;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #map {
+                width: 100%;
+                height: 100%;
+            }
+
+            /* 1. Map Title Styling */
+            .map-title {
+                position: absolute;
+                top: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 1000;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 10px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                font-size: 20px;
+                font-weight: 700;
+                color: #2c3e50;
+                letter-spacing: 0.5px;
+                border-left: 5px solid #3498db;
+            }
+
+            /* 2. North Arrow Styling */
+            .north-arrow {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                z-index: 1000;
+                background: rgba(255, 255, 255, 0.9);
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .north-arrow img {
+                width: 28px;
+                height: 28px;
+            }
+
+            /* 3. Legend Custom Styling */
+            .map-legend {
+                position: absolute;
+                bottom: 30px;
+                right: 15px;
+                z-index: 1000;
+                background: rgba(255, 255, 255, 0.95);
+                padding: 12px 16px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                max-height: 250px;
+                overflow-y: auto;
+                font-size: 13px;
+                color: #333;
+            }
+            .map-legend h4 {
+                margin: 0 0 8px 0;
+                font-size: 14px;
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 4px;
+            }
+
+            /* 4. OpenLayers Scale Line Styling */
+            .ol-scale-line {
+                background: rgba(255, 255, 255, 0.85) !important;
+                border-radius: 4px !important;
+                bottom: 15px !important;
+                left: 15px !important;
+                padding: 4px 8px !important;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            }
+            .ol-scale-line-inner {
+                border: 2px solid #2c3e50 !important;
+                border-top: none !important;
+                color: #2c3e50 !important;
+                font-weight: bold !important;
+                font-size: 11px !important;
+            }
+
+            /* Control Overrides */
+            .ol-control > * {
+                background-color: #f8f8f8 !important;
+                color: #444444 !important;
+                border-radius: 4px;
+            }
         </style>
-        <title></title>
+        <title>Karvir Map View</title>
     </head>
     <body>
-        <div id="map">
-            <div id="popup" class="ol-popup">
-                <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-                <div id="popup-content"></div>
+        <div class="map-container">
+            <!-- Map Title -->
+            <div class="map-title">Karvir GIS Map</div>
+
+            <!-- North Arrow -->
+            <div class="north-arrow" title="North Arrow">
+                <svg width="28" height="28" viewBox="0 0 100 100">
+                    <polygon points="50,5 65,50 50,40" fill="#e74c3c"/>
+                    <polygon points="50,5 35,50 50,40" fill="#c0392b"/>
+                    <polygon points="50,95 65,50 50,40" fill="#bdc3c7"/>
+                    <polygon points="50,95 35,50 50,40" fill="#7f8c8d"/>
+                    <text x="50" y="22" font-size="18" font-weight="bold" text-anchor="middle" fill="#ffffff">N</text>
+                </svg>
+            </div>
+
+            <!-- Map Div -->
+            <div id="map">
+                <div id="popup" class="ol-popup">
+                    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                    <div id="popup-content"></div>
+                </div>
             </div>
         </div>
+
         <script src="resources/qgis2web_expressions.js"></script>
         <script src="./resources/functions.js"></script>
         <script src="./resources/ol.js"></script>
         <script src="./resources/ol-layerswitcher.js"></script>
         <script src="resources/photon-geocoder-autocomplete.min.js"></script>
         <script src="resources/olms.js"></script>
-        <script src="layers/karvir_clipclipped_2.js"></script><script src="layers/building_3.js"></script><script src="layers/contour_4.js"></script><script src="layers/landuse_5.js"></script><script src="layers/Railway_6.js"></script><script src="layers/roads_7.js"></script><script src="layers/water_8.js"></script>
-        <script src="styles/karvir_clipclipped_2_style.js"></script><script src="styles/building_3_style.js"></script><script src="styles/contour_4_style.js"></script><script src="styles/landuse_5_style.js"></script><script src="styles/Railway_6_style.js"></script><script src="styles/roads_7_style.js"></script><script src="styles/water_8_style.js"></script>
+        
+        <script src="layers/karvir_clipclipped_2.js"></script>
+        <script src="layers/building_3.js"></script>
+        <script src="layers/contour_4.js"></script>
+        <script src="layers/landuse_5.js"></script>
+        <script src="layers/Railway_6.js"></script>
+        <script src="layers/roads_7.js"></script>
+        <script src="layers/water_8.js"></script>
+
+        <script src="styles/karvir_clipclipped_2_style.js"></script>
+        <script src="styles/building_3_style.js"></script>
+        <script src="styles/contour_4_style.js"></script>
+        <script src="styles/landuse_5_style.js"></script>
+        <script src="styles/Railway_6_style.js"></script>
+        <script src="styles/roads_7_style.js"></script>
+        <script src="styles/water_8_style.js"></script>
+
         <script src="./layers/layers.js" type="text/javascript"></script> 
         <script src="./resources/Autolinker.min.js"></script>
         <script src="./resources/qgis2web.js"></script>
+
+        <!-- OpenLayers Scale Line Script Add-on -->
+        <script>
+            if (typeof map !== 'undefined') {
+                var scaleLineControl = new ol.control.ScaleLine({
+                    units: 'metric',
+                    bar: true,
+                    steps: 4,
+                    text: true,
+                    minWidth: 100
+                });
+                map.addControl(scaleLineControl);
+            }
+        </script>
     </body>
 </html>
